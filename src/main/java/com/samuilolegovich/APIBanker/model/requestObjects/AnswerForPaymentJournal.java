@@ -1,7 +1,9 @@
 package com.samuilolegovich.APIBanker.model.requestObjects;
 
+import com.samuilolegovich.APIBanker.model.db.PaymentsJournal;
+
 public class AnswerForPaymentJournal {
-    private int payment_id;
+    private long payment_id;
     private String timestamp;   // 2020-08-25 13:18:54
     private String src_acc_num;
     private String dest_acc_num;
@@ -14,12 +16,21 @@ public class AnswerForPaymentJournal {
     public AnswerForPaymentJournal() {
     }
 
+    public AnswerForPaymentJournal(PaymentsJournal paymentsJournal) {
+        this.payment_id = paymentsJournal.getPayment_id();
+        this.timestamp = paymentsJournal.getTimestamp();
+        this.src_acc_num = paymentsJournal.getSrc_acc_num();
+        this.dest_acc_num = paymentsJournal.getDest_acc_num();
+        this.amount = paymentsJournal.getAmount();
+        this.payer = null;
+        this.recipient = null;
+    }
 
-    public int getPayment_id() {
+    public long getPayment_id() {
         return payment_id;
     }
 
-    public void setPayment_id(int payment_id) {
+    public void setPayment_id(long payment_id) {
         this.payment_id = payment_id;
     }
 

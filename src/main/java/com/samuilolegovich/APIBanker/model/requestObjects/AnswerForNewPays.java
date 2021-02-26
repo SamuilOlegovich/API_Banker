@@ -1,17 +1,27 @@
 package com.samuilolegovich.APIBanker.model.requestObjects;
 
 public class AnswerForNewPays {
-    private int payment_id;
+    private long payment_id;
     private String status;
 
     public AnswerForNewPays() {
     }
 
-    public int getPayment_id() {
+    public AnswerForNewPays(long payment_id, String status) {
+        this.payment_id = payment_id;
+        this.status = status;
+    }
+
+    public AnswerForNewPays(AnswerForNewPay answerForNewPay) {
+        this.payment_id = answerForNewPay.getPayment_id();
+        this.status = Status.ok.toString();
+    }
+
+    public long getPayment_id() {
         return payment_id;
     }
 
-    public void setPayment_id(int payment_id) {
+    public void setPayment_id(long payment_id) {
         this.payment_id = payment_id;
     }
 
