@@ -1,6 +1,9 @@
 package com.samuilolegovich.APIBanker.model.db;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import com.samuilolegovich.APIBanker.model.inObjects.Account;
 
 import javax.persistence.*;

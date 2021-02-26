@@ -1,16 +1,47 @@
 package com.samuilolegovich.APIBanker.model.requestObjects;
 
+import com.samuilolegovich.APIBanker.model.db.Accounts;
+
+
+
 public class AnswerClientID {
-    private int account_id;
+    private long account_id;
     private String account_num;
     private String account_type;
-    private int balance;
+    private double balance;
 
     public AnswerClientID() {
     }
 
-    public int getAccount_id() {
+    public AnswerClientID(int account_id, String account_num, String account_type, int balance) {
+        this.account_id = account_id;
+        this.account_num = account_num;
+        this.account_type = account_type;
+        this.balance = balance;
+    }
+
+    public AnswerClientID(Accounts accounts) {
+        this.account_id = accounts.getId();
+        this.account_num = accounts.getAccount_num();
+        this.account_type = accounts.getAccount_type();
+        this.balance = accounts.getBalance();
+    }
+
+
+    public long getAccount_id() {
         return account_id;
+    }
+
+    public void setAccount_id(long account_id) {
+        this.account_id = account_id;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
     }
 
     public void setAccount_id(int account_id) {
@@ -31,10 +62,6 @@ public class AnswerClientID {
 
     public void setAccount_type(String account_type) {
         this.account_type = account_type;
-    }
-
-    public int getBalance() {
-        return balance;
     }
 
     public void setBalance(int balance) {

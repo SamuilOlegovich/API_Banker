@@ -1,6 +1,8 @@
 package com.samuilolegovich.APIBanker.model.db;
 
 
+import com.samuilolegovich.APIBanker.model.inObjects.NewPay;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -36,6 +38,15 @@ public class PaymentsJournal {
         this.dest_acc_id = dest_acc_id;
         this.dest_acc_num = dest_acc_num;
         this.reason = reason;
+    }
+
+    public PaymentsJournal(Accounts source, Accounts dest, NewPay newPay) {
+        this.amount = newPay.getAmount();
+        this.source_acc_id = source.getClientId();
+        this.src_acc_num = source.getAccount_num();
+        this.dest_acc_id = dest.getClientId();
+        this.dest_acc_num = dest.getAccount_num();
+        this.reason = newPay.getReason();
     }
 
     public void setSource_acc_id(long source_acc_id) { this.source_acc_id = source_acc_id; }

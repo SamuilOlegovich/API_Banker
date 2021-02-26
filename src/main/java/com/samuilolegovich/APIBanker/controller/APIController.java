@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.samuilolegovich.APIBanker.model.db.Accounts;
 import com.samuilolegovich.APIBanker.model.db.Clients;
+import com.samuilolegovich.APIBanker.model.db.PaymentsJournal;
 import com.samuilolegovich.APIBanker.model.exceptions.NotFoundException;
 import com.samuilolegovich.APIBanker.model.inObjects.Account;
 import com.samuilolegovich.APIBanker.model.inObjects.NewClient;
@@ -12,12 +13,13 @@ import com.samuilolegovich.APIBanker.model.repo.AccountsRepository;
 import com.samuilolegovich.APIBanker.model.repo.ClientsRepository;
 import com.samuilolegovich.APIBanker.model.repo.CustomizedAccountsRepository;
 import com.samuilolegovich.APIBanker.model.repo.PaymentsJournalRepository;
+import com.samuilolegovich.APIBanker.model.requestObjects.AnswerClientID;
+import com.samuilolegovich.APIBanker.model.requestObjects.AnswerForNewClient;
+import com.samuilolegovich.APIBanker.model.requestObjects.AnswerForNewPay;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 @RestController
@@ -44,79 +46,95 @@ public class APIController {
         return "{API}";
     }
 
+
     @GetMapping("/client_id={id}")
     public String findClient(@PathVariable(value = "id") long id) {
-//        if (!clientsRepository.existsById(id)) { return ""; }
-        Clients clients = clientsRepository.findById(id).orElseThrow(NotFoundException::new);
-//        Optional<Accounts> optionalAccounts = customizedAccountsRepository.findAllByClientId(id);
-        List<Accounts> accountsList = customizedAccountsRepository.findAllByClientId(id);
-//        List<Accounts> accountsList = new ArrayList<>();
-//        optionalAccounts.ifPresent(accountsList::add);
-//        System.out.println(accountsList.size());
-
-//        for (Accounts accounts : accountsList) {
-//            System.out.println(accounts.getAccount_type());
-//        }
-//
-        for (Accounts accounts : accountsList) {
-            System.out.println(accounts.getAccount_type());
-        }
         String out = "";
-
+//        if (!clientsRepository.existsById(id)) { return ""; }
+        // проверяем есть ли такой айди клиета если нет кидаем ошибку
+        clientsRepository.findById(id).orElseThrow(NotFoundException::new);
+        // получаем все счета клиета создаем объекты выводв серелиазуем их и отправляем ответ
+        List<Accounts> accountsList = customizedAccountsRepository.findAllByClientId(id);
+        AnswerClientID[] answerClientIDS = new AnswerClientID[accountsList.size()];
+        for (int i = 0; i < accountsList.size(); i++) {
+            answerClientIDS[i] = new AnswerClientID(accountsList.get(i));
+        }
         try {
-            out = objectMapper.writeValueAsString(accountsList);
+            out = objectMapper.writeValueAsString(answerClientIDS);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-
-//        AnswerClientID[] answerClientIDS;
-        // тут мы реализуем поиск акканутов (счетов) клиента по заданому айди
-
-
-//        return arrayList.stream().findFirst().orElseThrow(NotFoundException::new);
         return out;
     }
 
 
     @PostMapping("/client")
     public String createClient(@RequestBody String in) {
-        // создать клиента и уго счета
-        // вернуть Ответ:
-        // Код http: 201 - добавление успешно
-        // {"client_id": 123}
-//        NewClient newClient = null;
+        AnswerForNewClient answerForNewClient = null;
+        String out = "";
         try {
             newClient = objectMapper.readValue(in, NewClient.class);
             Clients clientsDB = new Clients(newClient);
             clientsRepository.save(clientsDB);
+            answerForNewClient = new AnswerForNewClient(clientsDB);
             for (Account account : newClient.getAccounts()) {
                 Accounts accountsDB = new Accounts(clientsDB, account);
                 accountsRepository.save(accountsDB);
             }
+            try {
+                out = objectMapper.writeValueAsString(answerForNewClient);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-
-
-        return "RETURN";
+        return out;
     }
 
 
     @PostMapping("/create_payment")
     public String createPayment(@RequestBody String in) {
+        AnswerForNewPay answerForNewPay = null;
+        String out = "";
+
         try {
             newPay = objectMapper.readValue(in, NewPay.class);
+            // проверяем есть ли вообще такие платильщики
+            clientsRepository.findById(newPay.getSource_acc_id()).orElseThrow(NotFoundException::new);
+            clientsRepository.findById(newPay.getDest_acc_id()).orElseThrow(NotFoundException::new);
+            // получаем их счета
+            List<Accounts> sourceAccList = customizedAccountsRepository.findAllByClientId(newPay.getSource_acc_id());
+            List<Accounts> destAccList = customizedAccountsRepository.findAllByClientId(newPay.getDest_acc_id());
+            for (Accounts accounts : sourceAccList) {
+                if (accounts.getBalance() >= newPay.getAmount()) {
+                    answerForNewPay = makeTransferOfFunds(newPay, accounts, destAccList.get(0));
+                    break;
+                }
+            }
+            out = objectMapper.writeValueAsString(answerForNewPay);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+        return out;
+    }
 
-        return "RETURN";
+    private AnswerForNewPay makeTransferOfFunds(NewPay newPay, Accounts source, Accounts dest) {
+        source.setBalance(source.getBalance() - newPay.getAmount());
+        dest.setBalance(dest.getBalance() + newPay.getAmount());
+        PaymentsJournal paymentsJournal = new PaymentsJournal(source, dest, newPay);
+        AnswerForNewPay answerForNewPay = new AnswerForNewPay(paymentsJournal);
+        paymentsJournalRepository.save(paymentsJournal);
+        accountsRepository.save(source);
+        accountsRepository.save(dest);
+        return answerForNewPay;
     }
 
 
 
     @PostMapping("/create_payments")
     public String createPayments(@RequestBody String in) {
+        NewPay[] newPays;
         try {
             newPays = objectMapper.readValue(in, NewPay[].class);;
         } catch (JsonProcessingException e) {
