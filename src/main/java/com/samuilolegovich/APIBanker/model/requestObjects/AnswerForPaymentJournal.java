@@ -3,6 +3,8 @@ package com.samuilolegovich.APIBanker.model.requestObjects;
 import com.samuilolegovich.APIBanker.model.db.Clients;
 import com.samuilolegovich.APIBanker.model.db.PaymentsJournal;
 
+
+
 public class AnswerForPaymentJournal {
     private long payment_id;
     private String timestamp;   // 2020-08-25 13:18:54

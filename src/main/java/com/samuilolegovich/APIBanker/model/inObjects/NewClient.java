@@ -2,6 +2,7 @@ package com.samuilolegovich.APIBanker.model.inObjects;
 
 import java.util.ArrayList;
 
+
 public class NewClient {
     private String first_name;
     private String last_name;

@@ -1,18 +1,16 @@
 package com.samuilolegovich.APIBanker.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.samuilolegovich.APIBanker.model.db.Accounts;
 import com.samuilolegovich.APIBanker.model.db.Clients;
 import com.samuilolegovich.APIBanker.model.db.PaymentsJournal;
 import com.samuilolegovich.APIBanker.model.exceptions.NotFoundException;
-import com.samuilolegovich.APIBanker.model.inObjects.Account;
-import com.samuilolegovich.APIBanker.model.inObjects.NewClient;
-import com.samuilolegovich.APIBanker.model.inObjects.NewPay;
-import com.samuilolegovich.APIBanker.model.inObjects.PaymentJournal;
+import com.samuilolegovich.APIBanker.model.inObjects.*;
 import com.samuilolegovich.APIBanker.model.repo.*;
 import com.samuilolegovich.APIBanker.model.requestObjects.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,16 +36,16 @@ public class APIController {
 
 
 
+
     @GetMapping
-    public String page() {
-        return "--- *** APIBanker *** ---";
+    public ResponseEntity page() {
+        return new ResponseEntity("--- *** APIBanker *** ---", HttpStatus.OK);
     }
 
 
 
     @GetMapping("/client_id={id}")
-    public String findClient(@PathVariable(value = "id") long id) {
-        String out = null;
+    public ResponseEntity<AnswerClientID[]> findClient(@PathVariable(value = "id") long id) {
 //        if (!clientsRepository.existsById(id)) { return ""; }
         // проверяем есть ли такой айди клиета если нет кидаем ошибку
         clientsRepository.findById(id).orElseThrow(NotFoundException::new);
@@ -57,57 +55,34 @@ public class APIController {
         for (int i = 0; i < accountsList.size(); i++) {
             answerClientIDS[i] = new AnswerClientID(accountsList.get(i));
         }
-        try {
-            out = objectMapper.writeValueAsString(answerClientIDS);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return out;
+        return new ResponseEntity<>(answerClientIDS, HttpStatus.OK);
     }
 
 
 
     @PostMapping("/client")
-    public String createClient(@RequestBody String in) {
-        AnswerForNewClient answerForNewClient = null;
-        NewClient newClient;
-        String out = null;
-        try {
-            newClient = objectMapper.readValue(in, NewClient.class);
-            Clients clientsDB = new Clients(newClient);
-            clientsRepository.save(clientsDB);
-            answerForNewClient = new AnswerForNewClient(clientsDB);
-            for (Account account : newClient.getAccounts()) {
-                Accounts accountsDB = new Accounts(clientsDB, account);
-                accountsRepository.save(accountsDB);
-            }
-            out = objectMapper.writeValueAsString(answerForNewClient);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+    public ResponseEntity<AnswerForNewClient> createClient(@RequestBody NewClient in) {
+        Clients clientsDB = new Clients(in);
+        clientsRepository.save(clientsDB);
+        for (Account account : in.getAccounts()) {
+            Accounts accountsDB = new Accounts(clientsDB, account);
+            accountsRepository.save(accountsDB);
         }
-        return out;
+        AnswerForNewClient answerForNewClient = new AnswerForNewClient(clientsDB);
+        return new ResponseEntity<>(answerForNewClient, HttpStatus.CREATED);
     }
 
 
 
-    @PostMapping("/create_payment")
-    public String createPayment(@RequestBody String in) {
-        AnswerForNewPay answerForNewPay = null;
-        String out = null;
-        NewPay newPay;
 
-        try {
-            newPay = objectMapper.readValue(in, NewPay.class);
-            // проверяем есть ли вообще такие платильщики
-            clientsRepository.findById(newPay.getSource_acc_id()).orElseThrow(NotFoundException::new);
-            clientsRepository.findById(newPay.getDest_acc_id()).orElseThrow(NotFoundException::new);
-            // получаем счета и сделать перевод
-            answerForNewPay = receiveInvoicesAndMakeTransfer(newPay);
-            out = objectMapper.writeValueAsString(answerForNewPay);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return out;
+    @PostMapping("/create_payment")
+    public ResponseEntity<AnswerForNewPay> createPayment(@RequestBody NewPay in) {
+        // проверяем есть ли вообще такие платильщики
+        clientsRepository.findById(in.getSource_acc_id()).orElseThrow(NotFoundException::new);
+        clientsRepository.findById(in.getDest_acc_id()).orElseThrow(NotFoundException::new);
+        // получаем счета и сделать перевод
+        AnswerForNewPay answerForNewPay = receiveInvoicesAndMakeTransfer(in);
+        return new ResponseEntity<>(answerForNewPay, HttpStatus.CREATED);
     }
 
     private AnswerForNewPay receiveInvoicesAndMakeTransfer(NewPay newPay) {
@@ -136,19 +111,9 @@ public class APIController {
 
 
     @PostMapping("/create_payments")
-    public String createPayments(@RequestBody String in) {
-        AnswerForNewPays[] answerForNewPaysArr;
-        List<NewPay> newPayList = null;
-        String out = null;
-
-        try {
-            newPayList = objectMapper.readValue(in, List.class);
-            answerForNewPaysArr = makeAllPayments(newPayList);
-            out = objectMapper.writeValueAsString(answerForNewPaysArr);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return out;
+    public ResponseEntity<AnswerForNewPays[]> createPayments(@RequestBody List<NewPay> in) {
+        AnswerForNewPays[] answerForNewPaysArr = makeAllPayments(in);
+        return new ResponseEntity<>(answerForNewPaysArr, HttpStatus.OK);
     }
 
     private AnswerForNewPays[] makeAllPayments(List<NewPay> newPayList) {
@@ -177,25 +142,15 @@ public class APIController {
 
 
     @PostMapping("/payment_journal")
-    public String getPaymentJournal(@RequestBody String in) {
-        AnswerForPaymentJournal[] answerForPaymentJournalArr;
-        PaymentJournal paymentJournal;
-        String out = null;
-        try {
-            paymentJournal = objectMapper.readValue(in, PaymentJournal.class);
-            answerForPaymentJournalArr = getPaymentReport(paymentJournal);
-            out = objectMapper.writeValueAsString(answerForPaymentJournalArr);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return out;
+    public ResponseEntity<AnswerForPaymentJournal[]> getPaymentJournal(@RequestBody PaymentJournal in) {
+        AnswerForPaymentJournal[] answerForPaymentJournalArr = getPaymentReport(in);
+        return new ResponseEntity<>(answerForPaymentJournalArr, HttpStatus.OK);
     }
 
     private AnswerForPaymentJournal[] getPaymentReport(PaymentJournal paymentJournal) {
         List<PaymentsJournal> paymentsJournalList = customizedPaymentsJournalRepository
                 .findAllBySourceAccIdAndDestAccId(paymentJournal.getSource_acc_id(),
                         paymentJournal.getDest_acc_id());
-//                .orElseThrow(NotFoundException::new);
         AnswerForPaymentJournal[] answerForPaymentJournalsArr = new AnswerForPaymentJournal[paymentsJournalList.size()];
         Optional<Clients> optionalClientsRecipient = clientsRepository.findById(paymentJournal.getRecipient_id());
         Optional<Clients> optionalClientsPayer = clientsRepository.findById(paymentJournal.getPayer_id());
