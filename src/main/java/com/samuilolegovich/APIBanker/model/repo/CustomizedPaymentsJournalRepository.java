@@ -8,6 +8,5 @@ import java.util.List;
 
 @Repository
 public interface CustomizedPaymentsJournalRepository extends CrudRepository<PaymentsJournal, Long> {
-    List<PaymentsJournal> findAllBySourceAccId (long source_acc_id);
-    List<PaymentsJournal> findAllByDestAccId (long dest_acc_id);
+    List<PaymentsJournal> findAllBySourceAccIdAndDestAccId (long source_acc_id, long dest_acc_id);
 }

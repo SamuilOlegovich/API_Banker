@@ -1,5 +1,6 @@
 package com.samuilolegovich.APIBanker.model.requestObjects;
 
+import com.samuilolegovich.APIBanker.model.db.Clients;
 import com.samuilolegovich.APIBanker.model.db.PaymentsJournal;
 
 public class AnswerForPaymentJournal {
@@ -16,14 +17,14 @@ public class AnswerForPaymentJournal {
     public AnswerForPaymentJournal() {
     }
 
-    public AnswerForPaymentJournal(PaymentsJournal paymentsJournal) {
+    public AnswerForPaymentJournal(PaymentsJournal paymentsJournal, Clients payer, Clients recipient) {
+        this.recipient = new Recipient(recipient.getFirst_name(), recipient.getLast_name());
+        this.payer = new Payer(payer.getFirst_name(), payer.getLast_name());
+        this.dest_acc_num = paymentsJournal.getDest_acc_num();
+        this.src_acc_num = paymentsJournal.getSrc_acc_num();
         this.payment_id = paymentsJournal.getPayment_id();
         this.timestamp = paymentsJournal.getTimestamp();
-        this.src_acc_num = paymentsJournal.getSrc_acc_num();
-        this.dest_acc_num = paymentsJournal.getDest_acc_num();
         this.amount = paymentsJournal.getAmount();
-        this.payer = null;
-        this.recipient = null;
     }
 
     public long getPayment_id() {

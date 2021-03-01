@@ -10,15 +10,11 @@ import com.samuilolegovich.APIBanker.model.inObjects.Account;
 import com.samuilolegovich.APIBanker.model.inObjects.NewClient;
 import com.samuilolegovich.APIBanker.model.inObjects.NewPay;
 import com.samuilolegovich.APIBanker.model.inObjects.PaymentJournal;
-import com.samuilolegovich.APIBanker.model.repo.AccountsRepository;
-import com.samuilolegovich.APIBanker.model.repo.ClientsRepository;
-import com.samuilolegovich.APIBanker.model.repo.CustomizedAccountsRepository;
-import com.samuilolegovich.APIBanker.model.repo.PaymentsJournalRepository;
+import com.samuilolegovich.APIBanker.model.repo.*;
 import com.samuilolegovich.APIBanker.model.requestObjects.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,9 +24,11 @@ import java.util.Optional;
 @RequestMapping("api")
 public class APIController {
     @Autowired
-    private PaymentsJournalRepository paymentsJournalRepository;
+    private CustomizedPaymentsJournalRepository customizedPaymentsJournalRepository;
     @Autowired
-    CustomizedAccountsRepository customizedAccountsRepository;
+    private CustomizedAccountsRepository customizedAccountsRepository;
+    @Autowired
+    private PaymentsJournalRepository paymentsJournalRepository;
     @Autowired
     private AccountsRepository accountsRepository;
     @Autowired
@@ -44,6 +42,7 @@ public class APIController {
     public String page() {
         return "--- *** APIBanker *** ---";
     }
+
 
 
     @GetMapping("/client_id={id}")
@@ -65,6 +64,7 @@ public class APIController {
         }
         return out;
     }
+
 
 
     @PostMapping("/client")
@@ -89,6 +89,7 @@ public class APIController {
     }
 
 
+
     @PostMapping("/create_payment")
     public String createPayment(@RequestBody String in) {
         AnswerForNewPay answerForNewPay = null;
@@ -106,7 +107,6 @@ public class APIController {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        System.out.println(out);
         return out;
     }
 
@@ -148,7 +148,6 @@ public class APIController {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        System.out.println(out);
         return out;
     }
 
@@ -176,108 +175,37 @@ public class APIController {
     }
 
 
+
     @PostMapping("/payment_journal")
     public String getPaymentJournal(@RequestBody String in) {
-        AnswerForPaymentJournal answerForPaymentJournal;
+        AnswerForPaymentJournal[] answerForPaymentJournalArr;
         PaymentJournal paymentJournal;
         String out = null;
-        // "payer_id": 123,
-        // "recipient_id": 124,
-        // "source_acc_id": 456,
-        // "dest_acc_id": 457
-
         try {
             paymentJournal = objectMapper.readValue(in, PaymentJournal.class);
-            answerForPaymentJournal = getPaymentReport(paymentJournal);
+            answerForPaymentJournalArr = getPaymentReport(paymentJournal);
+            out = objectMapper.writeValueAsString(answerForPaymentJournalArr);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-
         return out;
     }
 
-    private AnswerForPaymentJournal getPaymentReport(PaymentJournal paymentJournal) {
-        ArrayList<AnswerForPaymentJournal> answerForPaymentJournalList = new ArrayList<>();
-        answerForPaymentJournalList.addAll(getForPayerId(paymentJournal.getPayer_id()));
-        answerForPaymentJournalList.addAll(getForRecipientId(paymentJournal.getRecipient_id()));
-        answerForPaymentJournalList.addAll(getForSourceAccId(paymentJournal.getSource_acc_id()));
-        answerForPaymentJournalList.addAll(getForDestAccId(paymentJournal.getDest_acc_id()));
-        // "payment_id": 159,
-        //"timestamp": "2020-08-25 13:18:54",
-        // "src_acc_num":
-        // "123456789",
-        // "dest_acc_num":
-        // "987654321",
-        // "amount": 1000.00,
-        //
-        //"payer": {
-        //"first_name": "Имя",
-        //"last_name": "Имя" },
-        //"recipient": {
-        // "first_name": "Имя",
-        //"last_name": "Имя"
+    private AnswerForPaymentJournal[] getPaymentReport(PaymentJournal paymentJournal) {
+        List<PaymentsJournal> paymentsJournalList = customizedPaymentsJournalRepository
+                .findAllBySourceAccIdAndDestAccId(paymentJournal.getSource_acc_id(),
+                        paymentJournal.getDest_acc_id());
+//                .orElseThrow(NotFoundException::new);
+        AnswerForPaymentJournal[] answerForPaymentJournalsArr = new AnswerForPaymentJournal[paymentsJournalList.size()];
+        Optional<Clients> optionalClientsRecipient = clientsRepository.findById(paymentJournal.getRecipient_id());
+        Optional<Clients> optionalClientsPayer = clientsRepository.findById(paymentJournal.getPayer_id());
+        Clients clientsRecipient = optionalClientsRecipient.get();
+        Clients clientsPayer = optionalClientsPayer.get();
 
-
-        // "payer_id": 123,
-        // "recipient_id": 124,
-        // "source_acc_id": 456,
-        // "dest_acc_id": 457
-
-        return null;
-    }
-
-    // находим всю иформацию по расходам пользователя
-    private ArrayList<AnswerForPaymentJournal> getForPayerId(long in) {
-        // "payer_id": 123, - платильщик
-
-        // "payment_id": 159,
-        //"timestamp": "2020-08-25 13:18:54",
-        // "src_acc_num":
-        // "123456789",
-        // "dest_acc_num":
-        // "987654321",
-        // "amount": 1000.00,
-        //
-        //"payer": {
-        //"first_name": "Имя",
-        //"last_name": "Имя" },
-        //"recipient": {
-        // "first_name": "Имя",
-        //"last_name": "Имя"
-
-
-        return null;
-    }
-
-    // находим всю информацию по поступлениям пользователя
-    private ArrayList<AnswerForPaymentJournal> getForRecipientId(long in) {
-        // "recipient_id": 124,
-
-        // "payment_id": 159,
-        //"timestamp": "2020-08-25 13:18:54",
-        // "src_acc_num":
-        // "123456789",
-        // "dest_acc_num":
-        // "987654321",
-        // "amount": 1000.00,
-        //
-        //"payer": {
-        //"first_name": "Имя",
-        //"last_name": "Имя" },
-        //"recipient": {
-        // "first_name": "Имя",
-        //"last_name": "Имя"
-
-        return null;
-    }
-
-    private ArrayList<AnswerForPaymentJournal> getForSourceAccId(long in) {
-
-        return null;
-    }
-
-    private ArrayList<AnswerForPaymentJournal> getForDestAccId(long in) {
-
-        return null;
+        for (PaymentsJournal paymentsJournal : paymentsJournalList) {
+            answerForPaymentJournalsArr[paymentsJournalList.indexOf(paymentsJournal)]
+                    = new AnswerForPaymentJournal(paymentsJournal, clientsPayer, clientsRecipient);
+        }
+        return answerForPaymentJournalsArr;
     }
 }

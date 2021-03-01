@@ -26,6 +26,7 @@ public class PaymentsJournal {
     private String reason;  // назначение платежа
 
 
+
     public PaymentsJournal() {
     }
 
