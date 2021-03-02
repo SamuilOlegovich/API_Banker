@@ -9,6 +9,7 @@ import com.samuilolegovich.APIBanker.model.inObjects.*;
 import com.samuilolegovich.APIBanker.model.repo.*;
 import com.samuilolegovich.APIBanker.model.requestObjects.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
