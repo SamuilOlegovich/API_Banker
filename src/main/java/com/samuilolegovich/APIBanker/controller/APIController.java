@@ -66,9 +66,9 @@ public class APIController {
     }
 
 
-    @RequestMapping(value = "/client", method = RequestMethod.POST)
-    @ResponseBody
-//    @PostMapping("/client")
+//    @ResponseBody
+//    @RequestMapping(value = "/client", method = RequestMethod.POST)
+    @PostMapping("/client")
     public ResponseEntity<AnswerForNewClient> createClient(@RequestBody NewClient in) {
         Clients clientsDB = new Clients(in);
         clientsRepository.save(clientsDB);

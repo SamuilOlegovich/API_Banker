@@ -28,9 +28,7 @@ public class NewClient {
         return first_name;
     }
     @XmlElement
-    public String getLast_name() {
-        return last_name;
-    }
+    public String getLast_name() { return last_name; }
     @XmlElement
     public ArrayList<Account> getAccounts() {
         return accounts;
