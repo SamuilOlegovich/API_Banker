@@ -9,6 +9,8 @@ import com.samuilolegovich.APIBanker.model.exceptions.DestNotFoundException;
 import com.samuilolegovich.APIBanker.model.exceptions.SourceNotFoundException;
 import com.samuilolegovich.APIBanker.model.inObjects.*;
 import com.samuilolegovich.APIBanker.model.repo.*;
+import com.samuilolegovich.APIBanker.model.repo.pgsql.AccountsRepositoryPG;
+import com.samuilolegovich.APIBanker.model.repo.pgsql.ClientsRepositoryPG;
 import com.samuilolegovich.APIBanker.model.requestObjects.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,6 +35,10 @@ public class APIController {
     private AccountsRepository accountsRepository;
     @Autowired
     private ClientsRepository clientsRepository;
+    @Autowired
+    private AccountsRepositoryPG accountsRepositoryPG;
+    @Autowired
+    private ClientsRepositoryPG clientsRepositoryPG;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -60,8 +66,9 @@ public class APIController {
     }
 
 
-
-    @PostMapping("/client")
+    @RequestMapping(value = "/client", method = RequestMethod.POST)
+    @ResponseBody
+//    @PostMapping("/client")
     public ResponseEntity<AnswerForNewClient> createClient(@RequestBody NewClient in) {
         Clients clientsDB = new Clients(in);
         clientsRepository.save(clientsDB);
