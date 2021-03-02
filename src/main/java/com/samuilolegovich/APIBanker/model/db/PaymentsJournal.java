@@ -8,22 +8,20 @@ import javax.persistence.*;
 
 @Entity
 public class PaymentsJournal {
-    // класс отвечает за таблицу
-    // (если такой таблицы нет то при первом запуске он ее создаст)
 
-    @Id // @ID - Важно чтобы была из библиотеке -> javax.persistence.Id (айди для уникального индификатора в таблице)
-    @GeneratedValue(strategy = GenerationType.AUTO) // позволит генирировать при каждом добавлении новый айди
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long payment_id;
 
-    private String timestamp;   // время совершения платежа
+    private String timestamp;         // время совершения платежа
     private double amount;
     @Column(name = "source_acc_id")
-    private long sourceAccId; // источник платежа
-    private String src_acc_num; // счет клиента с которого списались деньги
+    private long sourceAccId;         // источник платежа
+    private String src_acc_num;       // счет клиента с которого списались деньги
     @Column(name = "dest_acc_id")
-    private long destAccId;   // получатель платежа
-    private String dest_acc_num; // счет клиента на который пришли деньги
-    private String reason;  // назначение платежа
+    private long destAccId;           // получатель платежа
+    private String dest_acc_num;      // счет клиента на который пришли деньги
+    private String reason;            // назначение платежа
 
 
 

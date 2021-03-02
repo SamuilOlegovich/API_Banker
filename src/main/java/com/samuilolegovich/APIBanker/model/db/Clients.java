@@ -12,11 +12,9 @@ import javax.persistence.Id;
 
 @Entity
 public class Clients {
-    // класс отвечает за таблицу
-    // (если такой таблицы нет то при первом запуске он ее создаст)
 
-    @Id // @ID - Важно чтобы была из библиотеке -> javax.persistence.Id (айди для уникального индификатора в таблице)
-    @GeneratedValue(strategy = GenerationType.AUTO) // позволит генирировать при каждом добавлении новый айди
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     private String first_name;

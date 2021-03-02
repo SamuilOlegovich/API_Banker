@@ -4,12 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.samuilolegovich.APIBanker.model.db.Accounts;
 import com.samuilolegovich.APIBanker.model.db.Clients;
 import com.samuilolegovich.APIBanker.model.db.PaymentsJournal;
-import com.samuilolegovich.APIBanker.model.exceptions.NotFoundException;
+import com.samuilolegovich.APIBanker.model.exceptions.ClientNotFoundException;
+import com.samuilolegovich.APIBanker.model.exceptions.DestNotFoundException;
+import com.samuilolegovich.APIBanker.model.exceptions.SourceNotFoundException;
 import com.samuilolegovich.APIBanker.model.inObjects.*;
 import com.samuilolegovich.APIBanker.model.repo.*;
 import com.samuilolegovich.APIBanker.model.requestObjects.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,17 +40,16 @@ public class APIController {
 
 
     @GetMapping
-    public ResponseEntity page() {
-        return new ResponseEntity("--- *** APIBanker *** ---", HttpStatus.OK);
+    public ResponseEntity<String> page() {
+        return new ResponseEntity<>("--- *** APIBanker *** ---", HttpStatus.OK);
     }
 
 
 
     @GetMapping("/client_id={id}")
     public ResponseEntity<AnswerClientID[]> findClient(@PathVariable(value = "id") long id) {
-//        if (!clientsRepository.existsById(id)) { return ""; }
         // проверяем есть ли такой айди клиета если нет кидаем ошибку
-        clientsRepository.findById(id).orElseThrow(NotFoundException::new);
+        clientsRepository.findById(id).orElseThrow(ClientNotFoundException::new);
         // получаем все счета клиета создаем объекты выводв серелиазуем их и отправляем ответ
         List<Accounts> accountsList = customizedAccountsRepository.findAllByClientId(id);
         AnswerClientID[] answerClientIDS = new AnswerClientID[accountsList.size()];
@@ -79,8 +79,8 @@ public class APIController {
     @PostMapping("/create_payment")
     public ResponseEntity<AnswerForNewPay> createPayment(@RequestBody NewPay in) {
         // проверяем есть ли вообще такие платильщики
-        clientsRepository.findById(in.getSource_acc_id()).orElseThrow(NotFoundException::new);
-        clientsRepository.findById(in.getDest_acc_id()).orElseThrow(NotFoundException::new);
+        clientsRepository.findById(in.getSource_acc_id()).orElseThrow(SourceNotFoundException::new);
+        clientsRepository.findById(in.getDest_acc_id()).orElseThrow(DestNotFoundException::new);
         // получаем счета и сделать перевод
         AnswerForNewPay answerForNewPay = receiveInvoicesAndMakeTransfer(in);
         return new ResponseEntity<>(answerForNewPay, HttpStatus.CREATED);
