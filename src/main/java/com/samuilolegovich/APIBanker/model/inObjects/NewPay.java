@@ -24,19 +24,11 @@ public class NewPay {
     }
 
     @XmlElement
-    public long getSource_acc_id() {
-        return source_acc_id;
-    }
+    public long getSource_acc_id() { return source_acc_id; }
     @XmlElement
-    public long getDest_acc_id() {
-        return dest_acc_id;
-    }
+    public long getDest_acc_id() { return dest_acc_id; }
     @XmlElement
-    public double getAmount() {
-        return amount;
-    }
-
-    public String getReason() {
-        return reason;
-    }
+    public double getAmount() { return amount; }
+    @XmlElement
+    public String getReason() { return reason; }
 }

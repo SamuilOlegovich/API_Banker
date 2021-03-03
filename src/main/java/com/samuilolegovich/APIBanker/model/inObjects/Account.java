@@ -23,17 +23,9 @@ public class Account {
     }
 
     @XmlElement
-    public String getAccount_num() {
-        return account_num;
-    }
-
+    public String getAccount_type() { return account_type; }
     @XmlElement
-    public String getAccount_type() {
-        return account_type;
-    }
-
+    public String getAccount_num() { return account_num; }
     @XmlElement
-    public double getBalance() {
-        return balance;
-    }
+    public double getBalance() { return balance; }
 }

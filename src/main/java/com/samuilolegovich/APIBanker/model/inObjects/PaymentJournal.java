@@ -24,19 +24,11 @@ public class PaymentJournal {
     }
 
     @XmlElement
-    public long getPayer_id() {
-        return payer_id;
-    }
+    public long getSource_acc_id() { return source_acc_id; }
     @XmlElement
-    public long getRecipient_id() {
-        return recipient_id;
-    }
+    public long getRecipient_id() { return recipient_id; }
     @XmlElement
-    public long getSource_acc_id() {
-        return source_acc_id;
-    }
+    public long getDest_acc_id() { return dest_acc_id; }
     @XmlElement
-    public long getDest_acc_id() {
-        return dest_acc_id;
-    }
+    public long getPayer_id() { return payer_id; }
 }

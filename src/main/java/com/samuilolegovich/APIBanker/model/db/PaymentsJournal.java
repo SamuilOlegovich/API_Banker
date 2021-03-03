@@ -2,7 +2,6 @@ package com.samuilolegovich.APIBanker.model.db;
 
 
 import com.samuilolegovich.APIBanker.model.inObjects.NewPay;
-
 import javax.persistence.*;
 
 
@@ -56,18 +55,10 @@ public class PaymentsJournal {
         this.reason = newPay.getReason();
     }
 
-    public void setSourceAccId(long sourceAccId) { this.sourceAccId = sourceAccId; }
-    public void setDest_acc_num(String dest_acc_num) { this.dest_acc_num = dest_acc_num; }
-    public void setSrc_acc_num(String src_acc_num) { this.src_acc_num = src_acc_num; }
-    public void setDestAccId(long destAccId) { this.destAccId = destAccId; }
     public void setPayment_id(long payment_id) { this.payment_id = payment_id; }
-    public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
-    public void setAmount(double amount) { this.amount = amount; }
     public void setReason(String reason) { this.reason = reason; }
-    public long getSourceAccId() { return sourceAccId; }
     public String getDest_acc_num() { return dest_acc_num; }
     public String getSrc_acc_num() { return src_acc_num; }
-    public long getDestAccId() { return destAccId; }
     public String getTimestamp() { return timestamp; }
     public long getPayment_id() { return payment_id; }
     public double getAmount() { return amount; }
