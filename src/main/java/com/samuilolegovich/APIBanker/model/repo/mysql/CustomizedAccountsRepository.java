@@ -1,4 +1,4 @@
-package com.samuilolegovich.APIBanker.model.repo;
+package com.samuilolegovich.APIBanker.model.repo.mysql;
 
 import com.samuilolegovich.APIBanker.model.db.Accounts;
 import org.springframework.data.repository.CrudRepository;
