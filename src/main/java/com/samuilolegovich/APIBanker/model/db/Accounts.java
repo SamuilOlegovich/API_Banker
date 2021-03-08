@@ -35,9 +35,6 @@ public class Accounts {
         this.balance = account.getBalance();
     }
 
-    public void setAccount_type(String account_type) { this.account_type = account_type; }
-    public void setAccount_num(String account_num) { this.account_num = account_num; }
-    public void setClientId(long clientId) { this.clientId = clientId; }
     public void setBalance(double balance) { this.balance = balance; }
     public String getAccount_type() { return account_type; }
     public String getAccount_num() { return account_num; }

@@ -8,7 +8,4 @@ import lombok.Data;
 @AllArgsConstructor
 public class ClientID {
     private int client_id;
-
-
-
 }
