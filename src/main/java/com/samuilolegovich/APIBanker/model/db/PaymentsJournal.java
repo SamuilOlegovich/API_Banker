@@ -14,17 +14,17 @@ public class PaymentsJournal {
     private long paymentId;
 
     @Column(name = "timestamp")
-    private String timeStamp;         // время совершения платежа
+    private String timeStamp;           // время совершения платежа
     private double amount;
     @Column(name = "source_acc_id")
-    private long sourceAccId;         // источник платежа
+    private long sourceAccId;           // источник платежа
     @Column(name = "src_acc_num")
-    private String srcAccNum;       // счет клиента с которого списались деньги
+    private String srcAccNum;           // счет клиента с которого списались деньги
     @Column(name = "dest_acc_id")
-    private long destAccId;           // получатель платежа
+    private long destAccId;             // получатель платежа
     @Column(name = "dest_acc_num")
-    private String destAccNum;      // счет клиента на который пришли деньги
-    private String reason;            // назначение платежа
+    private String destAccNum;          // счет клиента на который пришли деньги
+    private String reason;              // назначение платежа
 
 
 
