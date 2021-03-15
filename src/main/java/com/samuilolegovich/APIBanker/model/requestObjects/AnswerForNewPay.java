@@ -13,7 +13,7 @@ public class AnswerForNewPay {
     }
 
     public AnswerForNewPay(PaymentsJournal paymentsJournal) {
-        this.payment_id = paymentsJournal.getPayment_id();
+        this.payment_id = paymentsJournal.getPaymentId();
     }
 
     public void setPayment_id(long payment_id) { this.payment_id = payment_id; }

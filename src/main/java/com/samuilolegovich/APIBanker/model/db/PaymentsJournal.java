@@ -10,7 +10,8 @@ public class PaymentsJournal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long payment_id;
+    @Column(name = "payment_id")
+    private long paymentId;
 
     @Column(name = "timestamp")
     private String timeStamp;         // время совершения платежа
@@ -58,12 +59,12 @@ public class PaymentsJournal {
         this.reason = newPay.getReason();
     }
 
-    public void setPayment_id(long payment_id) { this.payment_id = payment_id; }
+    public void setPaymentId(long paymentId) { this.paymentId = paymentId; }
     public void setReason(String reason) { this.reason = reason; }
     public String getDestAccNum() { return destAccNum; }
     public String getSrcAccNum() { return srcAccNum; }
     public String getTimeStamp() { return timeStamp; }
-    public long getPayment_id() { return payment_id; }
+    public long getPaymentId() { return paymentId; }
     public double getAmount() { return amount; }
     public String getReason() { return reason; }
 }

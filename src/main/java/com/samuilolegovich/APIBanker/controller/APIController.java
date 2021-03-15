@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 @RestController
@@ -134,7 +132,7 @@ public class APIController {
 
     private AnswerForNewPays notMakeTransferOfFunds(NewPay newPay) {
         PaymentsJournal paymentsJournal = new PaymentsJournal(newPay);
-        AnswerForNewPays answerForNewPays = new AnswerForNewPays(paymentsJournal.getPayment_id(),
+        AnswerForNewPays answerForNewPays = new AnswerForNewPays(paymentsJournal.getPaymentId(),
                 Status.error.toString());
         paymentsJournalRepository.save(paymentsJournal);
         return answerForNewPays;

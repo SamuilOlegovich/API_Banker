@@ -24,7 +24,7 @@ public class AnswerForPaymentJournal {
         this.payer = new Payer(payer.getFirstName(), payer.getLastName());
         this.dest_acc_num = paymentsJournal.getDestAccNum();
         this.src_acc_num = paymentsJournal.getSrcAccNum();
-        this.payment_id = paymentsJournal.getPayment_id();
+        this.payment_id = paymentsJournal.getPaymentId();
         this.timestamp = paymentsJournal.getTimeStamp();
         this.amount = paymentsJournal.getAmount();
     }
