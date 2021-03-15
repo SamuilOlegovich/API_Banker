@@ -4,10 +4,7 @@ package com.samuilolegovich.APIBanker.model.db;
 
 import com.samuilolegovich.APIBanker.model.inObjects.NewClient;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 
 @Entity
@@ -17,23 +14,25 @@ public class Clients {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    private String first_name;
-    private String last_name;
+    @Column(name = "first_name")
+    private String firstName;
+    @Column(name = "last_name")
+    private String lastName;
 
     public Clients() {
     }
 
-    public Clients(String first_name, String last_name) {
-        this.first_name = first_name;
-        this.last_name = last_name;
+    public Clients(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     public Clients(NewClient newClient) {
-        this.first_name = newClient.getFirst_name();
-        this.last_name = newClient.getLast_name();
+        this.firstName = newClient.getFirst_name();
+        this.lastName = newClient.getLast_name();
     }
 
-    public String getFirst_name() { return first_name; }
-    public String getLast_name() { return last_name; }
+    public String getFirstName() { return firstName; }
+    public String getLastName() { return lastName; }
     public long getId() { return id; }
 }

@@ -20,12 +20,12 @@ public class AnswerForPaymentJournal {
     }
 
     public AnswerForPaymentJournal(PaymentsJournal paymentsJournal, Clients payer, Clients recipient) {
-        this.recipient = new Recipient(recipient.getFirst_name(), recipient.getLast_name());
-        this.payer = new Payer(payer.getFirst_name(), payer.getLast_name());
-        this.dest_acc_num = paymentsJournal.getDest_acc_num();
-        this.src_acc_num = paymentsJournal.getSrc_acc_num();
+        this.recipient = new Recipient(recipient.getFirstName(), recipient.getLastName());
+        this.payer = new Payer(payer.getFirstName(), payer.getLastName());
+        this.dest_acc_num = paymentsJournal.getDestAccNum();
+        this.src_acc_num = paymentsJournal.getSrcAccNum();
         this.payment_id = paymentsJournal.getPayment_id();
-        this.timestamp = paymentsJournal.getTimestamp();
+        this.timestamp = paymentsJournal.getTimeStamp();
         this.amount = paymentsJournal.getAmount();
     }
 

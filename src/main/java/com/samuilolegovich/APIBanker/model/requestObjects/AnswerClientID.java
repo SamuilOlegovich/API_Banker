@@ -22,8 +22,8 @@ public class AnswerClientID {
 
     public AnswerClientID(Accounts accounts) {
         this.account_id = accounts.getId();
-        this.account_num = accounts.getAccount_num();
-        this.account_type = accounts.getAccount_type();
+        this.account_num = accounts.getAccountNum();
+        this.account_type = accounts.getAccountType();
         this.balance = accounts.getBalance();
     }
 

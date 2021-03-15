@@ -5,6 +5,9 @@ import com.samuilolegovich.APIBanker.model.inObjects.Account;
 
 import javax.persistence.*;
 
+
+
+
 @Entity
 public class Accounts {
 
@@ -14,30 +17,32 @@ public class Accounts {
 
     @Column(name = "client_id")
     private long clientId;
-    private String account_num;
-    private String account_type;
+    @Column(name = "account_num")
+    private String accountNum;
+    @Column(name = "account_type")
+    private String accountType;
     private double balance;
 
     public Accounts() {
     }
 
-    public Accounts(long clientId, String account_num, String account_type, double balance) {
+    public Accounts(long clientId, String accountNum, String accountType, double balance) {
         this.clientId = clientId;
-        this.account_num = account_num;
-        this.account_type = account_type;
+        this.accountNum = accountNum;
+        this.accountType = accountType;
         this.balance = balance;
     }
 
     public Accounts(Clients clients, Account account) {
         this.clientId = clients.getId();
-        this.account_num = account.getAccount_num();
-        this.account_type = account.getAccount_type();
+        this.accountNum = account.getAccount_num();
+        this.accountType = account.getAccount_type();
         this.balance = account.getBalance();
     }
 
     public void setBalance(double balance) { this.balance = balance; }
-    public String getAccount_type() { return account_type; }
-    public String getAccount_num() { return account_num; }
+    public String getAccountType() { return accountType; }
+    public String getAccountNum() { return accountNum; }
     public long getClientId() { return clientId; }
     public double getBalance() { return balance; }
     public void setId(long id) { this.id = id; }

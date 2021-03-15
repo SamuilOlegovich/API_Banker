@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @RestController
@@ -160,6 +162,11 @@ public class APIController {
             answerForPaymentJournalsArr[paymentsJournalList.indexOf(paymentsJournal)]
                     = new AnswerForPaymentJournal(paymentsJournal, clientsPayer, clientsRecipient);
         }
+//        AnswerForPaymentJournal[] answerForPaymentJournalStream =
+//                paymentsJournalList.stream()
+//                .toArray(value -> new AnswerForPaymentJournal(value, clientsPayer, clientsRecipient));
+//
+//
         return answerForPaymentJournalsArr;
     }
 }
